@@ -1,4 +1,3 @@
-import OpenAI from 'openai'
 
 const CONTEXT = `
 You are generating realistic data pipeline incidents for PipelineIQ, an AI-native pipeline observability portal for a data engineering consultancy.
@@ -63,18 +62,27 @@ export default async function handler(req, res) {
   const apiKey = process.env.AZURE_OPENAI_API_KEY
   if (!apiKey) return res.status(503).json({ error: 'AZURE_OPENAI_API_KEY is not configured' })
 
-  const client = new OpenAI({
-    baseURL: 'https://pipeline-iq-resource.services.ai.azure.com/api/projects/pipeline-iq/openai/v1/',
-    apiKey,
-  })
+  const endpoint = 'https://pipeline-iq-resource.services.ai.azure.com/api/projects/pipeline-iq/openai/v1/chat/completions'
 
   try {
-    const completion = await client.chat.completions.create({
-      model: 'gpt-5.4-mini',
-      messages: [{ role: 'user', content: PROMPT }],
-      temperature: 0.88,
-      max_completion_tokens: 1400,
+    const upstream = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'api-key': apiKey,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-5.4-mini',
+        messages: [{ role: 'user', content: PROMPT }],
+        temperature: 0.88,
+        max_completion_tokens: 1400,
+      }),
     })
+    if (!upstream.ok) {
+      const errText = await upstream.text()
+      throw new Error(`Azure OpenAI ${upstream.status}: ${errText.slice(0, 400)}`)
+    }
+    const completion = await upstream.json()
 
     const text = completion.choices[0].message.content.trim()
     const jsonMatch = text.match(/\{[\s\S]*\}/)

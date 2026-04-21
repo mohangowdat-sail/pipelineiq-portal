@@ -1,4 +1,3 @@
-import OpenAI from 'openai'
 
 // ── Client architecture personas ──────────────────────────────────────────────
 const CLIENT_PERSONAS = {
@@ -120,21 +119,30 @@ RULES:
 - If asked outside the scope of this incident or platform, say so briefly.
 - Plain text only — no markdown headers. Short bullet lists are fine when listing steps.`
 
-  const client = new OpenAI({
-    baseURL: 'https://pipeline-iq-resource.services.ai.azure.com/api/projects/pipeline-iq/openai/v1/',
-    apiKey,
-  })
+  const endpoint = 'https://pipeline-iq-resource.services.ai.azure.com/api/projects/pipeline-iq/openai/v1/chat/completions'
 
   try {
-    const completion = await client.chat.completions.create({
-      model: 'gpt-5.4-mini',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        ...messages.slice(-12),
-      ],
-      temperature: 0.2,
-      max_completion_tokens: 400,
+    const upstream = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'api-key': apiKey,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-5.4-mini',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          ...messages.slice(-12),
+        ],
+        temperature: 0.2,
+        max_completion_tokens: 400,
+      }),
     })
+    if (!upstream.ok) {
+      const errText = await upstream.text()
+      throw new Error(`Azure OpenAI ${upstream.status}: ${errText.slice(0, 400)}`)
+    }
+    const completion = await upstream.json()
 
     const reply = completion.choices[0].message.content.trim()
     return res.status(200).json({ reply })
