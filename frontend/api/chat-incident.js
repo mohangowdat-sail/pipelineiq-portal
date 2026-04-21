@@ -125,7 +125,7 @@ RULES:
     const upstream = await fetch(endpoint, {
       method: 'POST',
       headers: {
-        'api-key': apiKey,
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
