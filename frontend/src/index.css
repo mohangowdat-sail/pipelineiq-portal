@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  html { font-family: 'Inter', system-ui, sans-serif; }
+  body {
+    background-color: #0a0a0a;
+    color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: #111111; }
+  ::-webkit-scrollbar-thumb { background: #333333; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #444444; }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface border border-border rounded-card p-4 transition-shadow duration-200;
+  }
+  .card:hover {
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 4px 20px rgba(0,0,0,0.4);
+  }
+  .btn-primary {
+    @apply bg-accent hover:bg-accent-light text-white font-medium px-4 py-2 rounded-lg
+           transition-all duration-150 active:scale-95 cursor-pointer border-0;
+  }
+  .btn-secondary {
+    @apply bg-surface2 hover:bg-border text-text-primary font-medium px-4 py-2 rounded-lg
+           transition-all duration-150 active:scale-95 cursor-pointer border border-border;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+  .severity-critical { @apply text-critical bg-critical/10 border border-critical/20; }
+  .severity-warning  { @apply text-warning  bg-warning/10  border border-warning/20;  }
+  .severity-info     { @apply text-text-secondary bg-surface2 border border-border;    }
+  .status-open        { @apply text-critical bg-critical/10 border border-critical/20; }
+  .status-investigating { @apply text-warning bg-warning/10 border border-warning/20; }
+  .status-resolved    { @apply text-healthy  bg-healthy/10  border border-healthy/20;  }
+  .cloud-azure  { @apply text-azure  bg-azure/10  border border-azure/20;  }
+  .cloud-aws    { @apply text-aws    bg-aws/10    border border-aws/20;    }
+  .cloud-oracle { @apply text-oracle bg-oracle/10 border border-oracle/20; }
+  .branch-main    { @apply text-healthy bg-healthy/10 border border-healthy/20; }
+  .branch-staging { @apply text-oracle  bg-oracle/10  border border-oracle/20; }
+  .branch-feature { @apply text-warning bg-warning/10 border border-warning/20; }
+  .table-row { @apply border-b border-border hover:bg-surface2/60 transition-colors duration-100; }
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:text-text-primary
+           hover:bg-surface2 transition-colors duration-150 cursor-pointer text-sm font-medium;
+  }
+  .nav-item.active { @apply text-text-primary bg-surface2; }
+}

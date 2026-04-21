@@ -1,0 +1,70 @@
+# ── Python ──────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+ENV/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ── Node / Vite ─────────────────────────────────────────────────────────────
+node_modules/
+dist/
+build/
+.vite/
+.cache/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ── Vercel ──────────────────────────────────────────────────────────────────
+# .vercel holds local link metadata (projectId + orgId). Each developer links
+# their own clone with `vercel link`. Never commit.
+.vercel
+
+# ── Environment / secrets ───────────────────────────────────────────────────
+# NEVER commit real values. .env.example sibling files are the templates.
+.env
+.env.local
+.env.*.local
+*.env
+!.env.example
+
+# ── IDE / editor ────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Claude Code ─────────────────────────────────────────────────────────────
+# Local-only Claude settings (per-machine overrides, not project policy)
+.claude/settings.local.json
+
+# ── OS ──────────────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ── Logs ────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Database / migrations ───────────────────────────────────────────────────
+# Local SQLite artefacts only — real DB lives elsewhere
+*.db
+*.sqlite
+*.sqlite3
