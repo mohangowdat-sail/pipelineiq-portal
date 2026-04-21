@@ -1,4 +1,6 @@
 
+import OpenAI from 'openai'
+
 // ── Client architecture personas ──────────────────────────────────────────────
 const CLIENT_PERSONAS = {
   'Spirax Group': `
@@ -119,33 +121,24 @@ RULES:
 - If asked outside the scope of this incident or platform, say so briefly.
 - Plain text only — no markdown headers. Short bullet lists are fine when listing steps.`
 
-  const endpoint = 'https://pipeline-iq-resource.services.ai.azure.com/api/projects/pipeline-iq/openai/v1/responses?api-version=preview'
+  const client = new OpenAI({
+    baseURL: 'https://pipeline-iq-resource.openai.azure.com/openai/v1',
+    apiKey,
+  })
 
   try {
-    const upstream = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'api-key': apiKey,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-5.4-mini',
-        input: [
-          { role: 'system', content: systemPrompt },
-          ...messages.slice(-12),
-        ],
-        temperature: 0.2,
-        max_output_tokens: 400,
-      }),
+    const response = await client.responses.create({
+      model: 'gpt-5.4-mini',
+      input: [
+        { role: 'system', content: systemPrompt },
+        ...messages.slice(-12),
+      ],
+      temperature: 0.2,
+      max_output_tokens: 400,
     })
-    if (!upstream.ok) {
-      const errText = await upstream.text()
-      throw new Error(`Azure OpenAI ${upstream.status}: ${errText.slice(0, 400)}`)
-    }
-    const completion = await upstream.json()
 
-    const rawReply = completion.output_text
-      ?? completion.output?.[0]?.content?.[0]?.text
+    const rawReply = response.output_text
+      ?? response.output?.[0]?.content?.[0]?.text
       ?? ''
     const reply = rawReply.trim()
     return res.status(200).json({ reply })
