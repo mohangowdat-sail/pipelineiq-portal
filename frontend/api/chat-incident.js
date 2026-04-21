@@ -121,7 +121,7 @@ RULES:
 - Plain text only — no markdown headers. Short bullet lists are fine when listing steps.`
 
   const client = new OpenAI({
-    baseURL: 'https://pipeline-iq-resource.openai.azure.com/openai/v1/',
+    baseURL: 'https://pipeline-iq-resource.services.ai.azure.com/api/projects/pipeline-iq/openai/v1/',
     apiKey,
   })
 

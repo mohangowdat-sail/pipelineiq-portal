@@ -64,7 +64,7 @@ export default async function handler(req, res) {
   if (!apiKey) return res.status(503).json({ error: 'AZURE_OPENAI_API_KEY is not configured' })
 
   const client = new OpenAI({
-    baseURL: 'https://pipeline-iq-resource.openai.azure.com/openai/v1/',
+    baseURL: 'https://pipeline-iq-resource.services.ai.azure.com/api/projects/pipeline-iq/openai/v1/',
     apiKey,
   })
 
