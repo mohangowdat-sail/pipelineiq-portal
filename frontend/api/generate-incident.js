@@ -62,20 +62,20 @@ export default async function handler(req, res) {
   const apiKey = process.env.AZURE_OPENAI_API_KEY
   if (!apiKey) return res.status(503).json({ error: 'AZURE_OPENAI_API_KEY is not configured' })
 
-  const endpoint = 'https://pipeline-iq-resource.services.ai.azure.com/api/projects/pipeline-iq/openai/v1/chat/completions'
+  const endpoint = 'https://pipeline-iq-resource.services.ai.azure.com/api/projects/pipeline-iq/openai/v1/responses?api-version=preview'
 
   try {
     const upstream = await fetch(endpoint, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        'api-key': apiKey,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         model: 'gpt-5.4-mini',
-        messages: [{ role: 'user', content: PROMPT }],
+        input: [{ role: 'user', content: PROMPT }],
         temperature: 0.88,
-        max_completion_tokens: 1400,
+        max_output_tokens: 1400,
       }),
     })
     if (!upstream.ok) {
@@ -84,7 +84,10 @@ export default async function handler(req, res) {
     }
     const completion = await upstream.json()
 
-    const text = completion.choices[0].message.content.trim()
+    const rawText = completion.output_text
+      ?? completion.output?.[0]?.content?.[0]?.text
+      ?? ''
+    const text = rawText.trim()
     const jsonMatch = text.match(/\{[\s\S]*\}/)
     if (!jsonMatch) throw new Error('Model returned no JSON')
 
