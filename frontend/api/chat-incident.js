@@ -1,4 +1,3 @@
-
 import OpenAI from 'openai'
 
 // ── Client architecture personas ──────────────────────────────────────────────
@@ -122,25 +121,22 @@ RULES:
 - Plain text only — no markdown headers. Short bullet lists are fine when listing steps.`
 
   const client = new OpenAI({
-    baseURL: 'https://pipeline-iq-resource.openai.azure.com/openai/v1',
+    baseURL: 'https://pipeline-iq-resource.openai.azure.com/openai/v1/',
     apiKey,
   })
 
   try {
-    const response = await client.responses.create({
+    const completion = await client.chat.completions.create({
       model: 'gpt-5.4-mini',
-      input: [
+      messages: [
         { role: 'system', content: systemPrompt },
         ...messages.slice(-12),
       ],
       temperature: 0.2,
-      max_output_tokens: 400,
+      max_completion_tokens: 400,
     })
 
-    const rawReply = response.output_text
-      ?? response.output?.[0]?.content?.[0]?.text
-      ?? ''
-    const reply = rawReply.trim()
+    const reply = completion.choices[0].message.content.trim()
     return res.status(200).json({ reply })
   } catch (err) {
     return res.status(500).json({ error: err.message })

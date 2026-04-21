@@ -1,4 +1,3 @@
-
 import OpenAI from 'openai'
 
 const CONTEXT = `
@@ -65,22 +64,19 @@ export default async function handler(req, res) {
   if (!apiKey) return res.status(503).json({ error: 'AZURE_OPENAI_API_KEY is not configured' })
 
   const client = new OpenAI({
-    baseURL: 'https://pipeline-iq-resource.openai.azure.com/openai/v1',
+    baseURL: 'https://pipeline-iq-resource.openai.azure.com/openai/v1/',
     apiKey,
   })
 
   try {
-    const response = await client.responses.create({
+    const completion = await client.chat.completions.create({
       model: 'gpt-5.4-mini',
-      input: PROMPT,
+      messages: [{ role: 'user', content: PROMPT }],
       temperature: 0.88,
-      max_output_tokens: 1400,
+      max_completion_tokens: 1400,
     })
 
-    const rawText = response.output_text
-      ?? response.output?.[0]?.content?.[0]?.text
-      ?? ''
-    const text = rawText.trim()
+    const text = completion.choices[0].message.content.trim()
     const jsonMatch = text.match(/\{[\s\S]*\}/)
     if (!jsonMatch) throw new Error('Model returned no JSON')
 
